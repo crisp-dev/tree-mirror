@@ -202,11 +202,13 @@ class TreeChanges extends NodeMap {
             this.anyParentsChanged = true;
             for (var i = 0; i < mutation.removedNodes.length; i++) {
                 var node = mutation.removedNodes[i];
-                this.getChange(node).removedFromParent(mutation.target);
+								if (node)
+                	this.getChange(node).removedFromParent(mutation.target);
             }
             for (var i = 0; i < mutation.addedNodes.length; i++) {
                 var node = mutation.addedNodes[i];
-                this.getChange(node).insertedIntoParent();
+								if (node)
+                	this.getChange(node).insertedIntoParent();
             }
             break;
 
@@ -235,11 +237,13 @@ class TreeChanges extends NodeMap {
   }
 
   getOldParent(node) {
+			if (!node)
+				return null;
       var change = this.get(node);
       return change ? change.getOldParent() : node.parentNode;
   }
 
-  getIsReachable(node) {
+  getIsReachable(node, previousNodes=[]) {
       if (node === this.rootNode)
           return true;
       if (!node)
@@ -248,23 +252,37 @@ class TreeChanges extends NodeMap {
       this.reachableCache = this.reachableCache || new NodeMap();
       var isReachable = this.reachableCache.get(node);
       if (isReachable === undefined) {
-          isReachable = this.getIsReachable(node.parentNode);
+          isReachable = this.getIsReachable(node.parentNode, previousNodes);
           this.reachableCache.set(node, isReachable);
       }
       return isReachable;
   }
 
   // A node wasReachable if its oldParent wasReachable.
-  getWasReachable(node) {
-      if (node === this.rootNode)
-          return true;
+	// NOTE: There is a bug in handling oldParent cache or the
+	// wasReachableCache. Sometimes a chain is created where
+	// getOldParent returns body for html, and vice versa resulting
+	// in an infinite loop. A quickfix for this was to add the
+	// previousNodes argument which tracks the chain and returns
+	// false if such circular structure is detected.
+  getWasReachable(node, previousNodes=[]) {
+			if (node === this.rootNode)
+					return true;
       if (!node)
           return false;
 
       this.wasReachableCache = this.wasReachableCache || new NodeMap();
       var wasReachable = this.wasReachableCache.get(node);
       if (wasReachable === undefined) {
-          wasReachable = this.getWasReachable(this.getOldParent(node));
+					var newNode = this.getOldParent(node);
+					previousNodes.push(node);
+
+					if (previousNodes.indexOf(newNode)) {
+						this.wasReachableCache.set(node, false);
+						return false;
+					}
+
+          wasReachable = this.getWasReachable(newNode, previousNodes);
           this.wasReachableCache.set(node, wasReachable);
       }
       return wasReachable;

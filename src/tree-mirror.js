@@ -62,6 +62,16 @@ var TreeMirror = (function () {
               ) {
                 parent.insertBefore(node, previous ? previous.nextSibling : parent.firstChild);
               }
+              // 21.3.2017: Handle <html> elements as special case in case we the tree is trying
+              // to remove it, we add back to root
+              else if (
+                node instanceof HTMLElement &&
+                node.nodeName === "HTML" &&
+                _this.root instanceof HTMLDocument &&
+                _this.root.contains(node) === false
+              ) {
+                _this.root.appendChild(node);
+              }
             }
             catch(e) {
               // In some cases it seems that MutationSummary determines the parent
@@ -77,16 +87,7 @@ var TreeMirror = (function () {
                 else
                   previous.appendChild(node);
               }
-              // 21.3.2017: Handle <html> elements as special case in case we the tree is trying
-              // to remove it, we add back to root
-              else if (
-                node instanceof HTMLElement &&
-                node.nodeName === "HTML" &&
-                _this.root instanceof HTMLDocument &&
-                _this.root.contains(node) === false
-              ) {
-                _this.root.appendChild(node);
-              }
+
               // Might still fail but we should call applyChanged inside try...catch
               // anyway
               if (_this.debug) {

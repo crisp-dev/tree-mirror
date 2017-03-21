@@ -1,8 +1,9 @@
 import { MutationSummary } from './mutation-summary';
 
 if (__DEV__) {
-  console.log(MutationSummary);
-  console.log(MutationSummary.NodeMap);
+  // console.log(MutationSummary);
+  // console.log(MutationSummary.NodeMap);
+  console.log("TreeMirror loaded in __dev__ mode")
 }
 
 var TreeMirror = (function () {

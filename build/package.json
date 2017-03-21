@@ -1,6 +1,6 @@
 {
   "name": "tree-mirror",
-  "version": "1.0.6",
+  "version": "1.0.7",
   "description": "DOM tree mirror that watches for changes",
   "main": "tree-mirror.js",
   "homepage": {

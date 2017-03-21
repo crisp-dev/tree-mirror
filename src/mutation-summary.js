@@ -243,7 +243,7 @@ class TreeChanges extends NodeMap {
       return change ? change.getOldParent() : node.parentNode;
   }
 
-  getIsReachable(node, previousNodes=[]) {
+  getIsReachable(node) {
       if (node === this.rootNode)
           return true;
       if (!node)
@@ -252,7 +252,7 @@ class TreeChanges extends NodeMap {
       this.reachableCache = this.reachableCache || new NodeMap();
       var isReachable = this.reachableCache.get(node);
       if (isReachable === undefined) {
-          isReachable = this.getIsReachable(node.parentNode, previousNodes);
+          isReachable = this.getIsReachable(node.parentNode);
           this.reachableCache.set(node, isReachable);
       }
       return isReachable;
@@ -277,7 +277,7 @@ class TreeChanges extends NodeMap {
 					var newNode = this.getOldParent(node);
 					previousNodes.push(node);
 
-					if (previousNodes.indexOf(newNode)) {
+					if (previousNodes.indexOf(newNode) >= 0) {
 						this.wasReachableCache.set(node, false);
 						return false;
 					}

@@ -19,7 +19,7 @@ var dir_modules = path.resolve(__dirname, 'node_modules');
 module.exports = {
 
   // Source maps (helps with debugging)
-  devtool: env == 'dev' ? 'cheap-eval-source-map' : 'hidden-source-map',
+  devtool: env == 'dev' ? 'eval-source-map' : 'hidden-source-map',
 
   // Entry point
   entry: path.resolve(dir_src, 'index.js'),

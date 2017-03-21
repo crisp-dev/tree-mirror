@@ -47,7 +47,13 @@ var TreeMirror = (function () {
               // The node might be a document element which has a parent reference
               // to the last node in the idMap. In this case we will see the error
               // above (see NOTE)
-              if (!node.contains(parent) && (node instanceof HTMLElement == true)) {
+              if (!node.contains(parent) && 
+                  (node instanceof HTMLElement === true) &&
+              // 21.3.2017: In some cases the idMap reports that the parent of the element is for example
+              // html comment. In this case we obviously don't want to apply the move so we check
+              // here that it is
+                  (parent instanceof HTMLElement === true)
+              ) {
                 parent.insertBefore(node, previous ? previous.nextSibling : parent.firstChild);
               }
             }

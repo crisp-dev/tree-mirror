@@ -29,8 +29,13 @@ var TreeMirror = (function () {
             var node = _this.deserializeNode(data);
             var parent = _this.deserializeNode(data.parentNode);
             var previous = _this.deserializeNode(data.previousSibling);
-            if (node.parentNode)
-                node.parentNode.removeChild(node);
+
+            if (node.contains(parent) === false &&
+                node instanceof HTMLElement === true &&
+                parent instanceof HTMLElement === true &&
+                node.parentNode) {
+                  node.parentNode.removeChild(node);
+            }
         });
 
         removed.forEach(function (data) {
@@ -72,8 +77,21 @@ var TreeMirror = (function () {
                 else
                   previous.appendChild(node);
               }
+              // 21.3.2017: Handle <html> elements as special case in case we the tree is trying
+              // to remove it, we add back to root
+              else if (
+                node instanceof HTMLElement &&
+                node.nodeName === "HTML" &&
+                _this.root instanceof HTMLDocument &&
+                _this.root.contains(node) === false
+              ) {
+                _this.root.appendChild(node);
+              }
               // Might still fail but we should call applyChanged inside try...catch
               // anyway
+              if (_this.debug) {
+                console.log(e)
+              }
             }
         });
 

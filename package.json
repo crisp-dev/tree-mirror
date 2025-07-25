@@ -28,6 +28,7 @@
     "module",
     "boilerplate"
   ],
+  "main": "build/tree-mirror.js",
   "author": "Andreas Urbanski <urbanski.andreas@gmail.com>",
   "license": "MIT",
   "homepage": "https://github.com/andreasur/npm-pyroplate#readme",
